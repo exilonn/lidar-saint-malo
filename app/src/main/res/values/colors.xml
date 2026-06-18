@@ -1,0 +1,4 @@
+<resources>
+    <!-- Adaptive launcher icon background (a deep tidal blue). -->
+    <color name="ic_launcher_background">#0B3D5C</color>
+</resources>

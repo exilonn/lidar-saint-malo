@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">Marées</string>
+    <string name="widget_description">Marée actuelle et prochaine pleine/basse mer pour votre position.</string>
+
+    <!-- Tide state -->
+    <string name="rising">Montante</string>
+    <string name="falling">Descendante</string>
+    <string name="high">Pleine mer</string>
+    <string name="low">Basse mer</string>
+    <string name="next_high">Prochaine pleine mer</string>
+    <string name="next_low">Prochaine basse mer</string>
+    <string name="air">Air</string>
+    <string name="sea">Mer</string>
+    <string name="hero_air_sea">Air %1$s    Mer %2$s</string>
+    <string name="hero_wind">Vent %1$s du %2$s</string>
+    <string name="hero_next_high">Pleine mer dans %1$s · %2$s</string>
+    <string name="hero_next_low">Basse mer dans %1$s · %2$s</string>
+    <string name="updated">Mis à jour %1$s</string>
+
+    <!-- Coming days -->
+    <string name="coming_days">Jours à venir</string>
+    <string name="weather_attribution">Météo : Open-Meteo</string>
+    <string name="details">Détails</string>
+
+    <!-- Day details -->
+    <string name="day_details_title">Détails horaires</string>
+    <string name="hourly_air">Air</string>
+    <string name="hourly_sea">Mer</string>
+    <string name="hourly_wind">Vent</string>
+    <string name="no_hourly_data">Aucune donnée horaire pour ce jour pour l\'instant.</string>
+
+    <!-- Relative time -->
+    <string name="today">Aujourd\'hui</string>
+    <string name="tomorrow">Demain</string>
+    <string name="just_now">à l\'instant</string>
+    <string name="min_ago">il y a %1$d min</string>
+    <string name="hours_ago">il y a %1$d h</string>
+    <string name="days_ago">il y a %1$d j</string>
+    <string name="countdown_hm">%1$d h %2$d min</string>
+    <string name="countdown_m">%1$d min</string>
+    <string name="in_time">dans %1$s</string>
+
+    <!-- States -->
+    <string name="fetching">Récupération des marées…</string>
+    <string name="location_needed_title">Localisation requise</string>
+    <string name="location_needed_body">Marées utilise votre position approximative pour trouver la station de marée la plus proche.</string>
+    <string name="grant_location">Autoriser la localisation</string>
+    <string name="open_settings">Ouvrir les paramètres</string>
+    <string name="cant_load_title">Impossible de charger les marées</string>
+    <string name="retry">Réessayer</string>
+    <string name="showing_saved">Marées enregistrées affichées — %1$s</string>
+    <string name="tide_unavailable">Les données de marée ne sont pas encore disponibles pour ce lieu.</string>
+    <string name="no_station_title">Aucune station de marée à proximité</string>
+    <string name="no_station_body_distance">La station de marée la plus proche est à environ %1$d km. Recherchez plutôt un lieu côtier.</string>
+    <string name="no_station_body">Aucune station de marée trouvée près de vous. Recherchez plutôt un lieu côtier.</string>
+    <string name="search_a_location">Rechercher un lieu</string>
+
+    <!-- Search -->
+    <string name="add_location">Ajouter un lieu</string>
+    <string name="search_hint">Rechercher un lieu ou une station</string>
+    <string name="search_idle">Recherchez un lieu ou une station de marée à ajouter.</string>
+    <string name="search_error">Échec de la recherche : %1$s</string>
+    <string name="search_rate_limited">Limite de requêtes atteinte — réessayez dans quelques minutes.</string>
+    <string name="search_empty">Aucune station ne correspond à « %1$s ».</string>
+    <string name="back">Retour</string>
+
+    <!-- Locations picker -->
+    <string name="locations">Lieux</string>
+    <string name="add_a_location">Ajouter un lieu</string>
+    <string name="current_location">Position actuelle</string>
+    <string name="remove">Supprimer</string>
+    <string name="switch_location">Changer de lieu</string>
+    <string name="places_attribution">Noms de lieux : © les contributeurs d\'OpenStreetMap</string>
+
+    <!-- Settings -->
+    <string name="settings">Paramètres</string>
+    <string name="theme">Thème</string>
+    <string name="language">Langue</string>
+    <string name="language_system">Langue du système</string>
+    <string name="language_english">English</string>
+    <string name="language_french">Français</string>
+    <string name="units">Unités</string>
+    <string name="units_metric">Métrique (m, °C)</string>
+    <string name="units_imperial">Impérial (ft, °F)</string>
+    <string name="clock_format">Horloge</string>
+    <string name="clock_24h">24 heures</string>
+    <string name="clock_12h">12 heures</string>
+    <string name="storage">Stockage</string>
+    <string name="clear_cache">Vider le cache</string>
+    <string name="clear_cache_body">Supprime toutes les données de marée et météo en cache ; elles seront récupérées à nouveau à la prochaine utilisation.</string>
+    <string name="clear_cache_confirm_title">Vider le cache ?</string>
+    <string name="clear_cache_confirm_body">Toutes les données de marée et météo en cache seront supprimées et récupérées à nouveau à la prochaine utilisation, en utilisant votre quota quotidien de requêtes TideCheck.</string>
+    <string name="cancel">Annuler</string>
+
+    <!-- Tide map -->
+    <string name="map">Carte</string>
+    <string name="map_disclaimer">Indicatif uniquement — ne pas utiliser pour la navigation</string>
+    <string name="map_unavailable">Sélectionnez un lieu pour voir sa carte des marées.</string>
+    <string name="map_key_missing">Carte indisponible — ajoutez votre clé MapTiler (MAPTILER_KEY) dans local.properties, puis recompilez.</string>
+    <string name="map_no_intertidal">Aucune zone intertidale cartographiée ici dans OpenStreetMap.</string>
+
+    <!-- Widget -->
+    <string name="tap_to_setup">Touchez pour configurer les marées</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A pair of stylised waves on the 108dp adaptive-icon canvas (inside the 72dp safe zone). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#7FD1FF"
+        android:pathData="M30,54 C36,46 42,46 48,54 C54,62 60,62 66,54 C72,46 78,46 84,54 L84,60 C78,52 72,52 66,60 C60,68 54,68 48,60 C42,52 36,52 30,60 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,68 C36,60 42,60 48,68 C54,76 60,76 66,68 C72,60 78,60 84,68 L84,74 C78,66 72,66 66,74 C60,82 54,82 48,74 C42,66 36,66 30,74 Z" />
+</vector>

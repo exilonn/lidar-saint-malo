@@ -1,0 +1,21 @@
+*.iml
+.gradle/
+/local.properties
+.idea/
+.DS_Store
+build/
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.keystore
+
+# LiDAR pipeline — raw data and scratch workspace never committed
+data/litto3d-raw/
+data/scratch/
+
+# Claude Code internal directory
+.claude/
+
+# Kotlin build cache
+.kotlin/

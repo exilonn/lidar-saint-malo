@@ -1,0 +1,9 @@
+<resources>
+    <!-- Compose owns all real theming; this XML theme only needs to be a no-action-bar,
+         edge-to-edge shell. Day/night handled by the values-night variant. -->
+    <style name="Theme.Tides" parent="android:Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>
