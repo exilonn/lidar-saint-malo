@@ -1385,6 +1385,223 @@ and `app_state` are all safe.
 
 ---
 
+## §16 Connectivity re-measured at SPRING levels — Change C UN-DEFERRED (2026-06-18)
+
+The v1.1/§11.1 deferral of hydraulic connectivity was based on a flood-fill that **seeded all
+four clip edges and propagated sea through nodata** (`analyze_connectivity_v13.py`). That injects
+"sea" from the **off-tile-north interior** (the station sits at the NW corner of DEM coverage; the
+true open bay is north, *off-tile*), which floods the gare in the model and made connectivity look
+worthless (98.8 % "connected"). **Re-measured with a physically-correct open-sea seed, the verdict
+flips: connectivity DOES keep the gare/La Découverte cluster dry at spring tide.**
+
+Scripts (inspect-only): `data/scratch/measure_on_pipeline_clip.py` (definitive — runs on the EXACT
+pipeline clip), plus `measure_saddle_spring.py`, `audit_disconnected_spring.py`,
+`locate_breach_and_regression.py` (native-mosaic cross-checks). ZH_Ref −6.2890; H_LAT→IGN69 = H_LAT − 6.2890.
+
+### §16.1 Grid caveat (why earlier native-mosaic numbers don't transfer)
+The pipeline clips station ± 3 km → a 6000×6000 window that is **74 % boundless nodata padding on
+the W+N** and **cuts off the southern third + eastern strip** of the 4000×5000 mosaic (incl. most of
+the deep SE Rance channel). All numbers below are on the **exact pipeline clip**.
+
+### §16.2 DEM elevation, gare cluster (IGN69)
+| place | elev (med) | floods bathtub when |
+|---|---|---|
+| La Découverte | +3.09 | H_LAT > 9.38 |
+| Gare/Rocabey | +4.37 | H_LAT > 10.66 |
+| Gare SNCF | +4.42–4.65 | H_LAT > 10.7 |
+| Le Rosais (real beach) | +2.85 | H_LAT > 9.14 |
+| E harbour shallows | +0.88 | H_LAT > 7.18 |
+
+### §16.3 Sea-connected flood-fill — gare reached or blocked?
+Seed = **west-shore** (valid cells whose west neighbour is the boundless padding → Rance-mouth flats)
++ **south clip edge**, ∩ wet; **nodata = barrier** (so the W/N padding cannot inject sea from the north).
+
+| level | targetElev | gare/Découverte | Le Rosais | disconnected % |
+|---|---|---|---|---|
+| H_LAT 10.5 | +4.211 | **BLOCKED (dry)** | FLOODS | 23.4 % |
+| H_LAT 12.0 | +5.711 | **BLOCKED (dry)** | FLOODS | 45.5 % |
+| PHMA 13.59 | +7.301 | floods (≈saddle) | FLOODS | 2.6 % |
+
+**Saddle (min blocking-terrain elevation on the best sea→gare path):**
+
+| probe | W* IGN69 | H_LAT* | vs PHMA +7.301 |
+|---|---|---|---|
+| La Découverte | ≈ +7.30 | ≈ 13.59 | **at PHMA** |
+| Gare SNCF | ≈ +7.30 | ≈ 13.59 | **at PHMA** |
+| Le Rosais | +2.70 | 8.99 | far below → correctly wet |
+
+→ **The DEM captures a continuous quay/dike ring around the gare cluster at ≈ +7.30 m IGN69.** The
+sea cannot reach the gare until the water is ≈ PHMA. So connectivity keeps the gare **dry across the
+entire realistic operating range** (it is wet in the bathtub model from H_LAT ≈ 10.7 upward — the
+user's H_LAT 12 case is squarely fixed) and only connects at the astronomical extreme. *(On the full
+mosaic, with the truncated south/east terrain restored, the saddle rises to +7.85 m / H_LAT 14.14 →
+dry even above PHMA. The clip's thin margin is an artefact of the truncated extent — see §16.6.)*
+
+**Question answered (does the DEM hold quays higher than +5.711?): YES** — the blocking ring is
+≈ +7.30 m, well above the H_LAT 12 surface (+5.711). Pure-DEM connectivity correctly keeps the gare
+dry at spring tide while keeping legitimate seaward intertidal (Le Rosais, saddle +2.70) wet.
+
+### §16.4 What connectivity would WRONGLY dry (regression to guard) — measured
+Kept-dry area at H_LAT 12 = 1,103,776 m²; of that **only 48,318 m² (4.4 %) is LOW (< +2.5 m)** — the
+regression candidates. They are one tight cluster in the **eastern inner harbour** (Bassin Bouvet /
+east of the wet docks), centroids 48.6422–48.6442 N, −2.0027…−1.9954 E:
+
+| area | centroid | elev |
+|---|---|---|
+| 30,586 m² | (48.6430, −2.00038) | +0.69…+2.49 |
+| 5,449 m² | (48.6430, −1.99540) | +1.48…+2.49 |
+| 2,855 m² | (48.6422, −2.00044) | +1.51…+2.49 |
+| + 3 more < 2.7 k m² | same pocket | +1.9…+2.49 |
+
+These are the §11.1 "east harbour shallows" — **measured (0 % nodata)** wet-dock fringes that must
+stay water. They are NOT the gare. The 95.6 % of kept-dry area that is ≥ +2.5 m is genuine protected
+dry land (gare/Découverte/Rocabey and higher).
+
+### §16.5 Locked basins — still auto-water (confirmed)
+Bassin Vauban / Duguay-Trouin / Bas-Sablons marina are **100 % nodata → already basemap water**, and
+the connectivity logic only filters **valid measured band cells**, so it never touches them. "Keep
+locked basins wet" therefore reduces to "**don't dry the measured eastern shallows**" → the allowlist
+in §16.4, *not* the deep basins. Confirmed unchanged from §11.1.
+
+### §16.6 Decision — Option A (connectivity) + keep-wet allowlist; Option B rejected
+- **Option A (pipeline sea-connected flood-fill) — CHOSEN.** Seed = west-shore + south edge, nodata
+  = barrier (§16.3). Keeps the gare dry to ≈ PHMA; keeps Le Rosais and seaward intertidal wet; the
+  only regression (48 k m² eastern shallows) is fixed by a keep-wet allowlist. No external reference.
+- **Option B (coastline-buffer clip) — REJECTED.** On the clip the gare is **1081–1261 m** from the
+  nearest genuine-sea cell while the harbour shallows that must stay wet are **1433 m** away — *farther
+  than the gare*. A single buffer distance therefore **cannot** keep the harbour wet without also
+  keeping the gare wet (or vice-versa). It also needs an OSM/coastline reference, which previously
+  failed on unclosed-bbox geometry. Strictly worse here.
+- **No moderate-tide regression:** at H_LAT 8.2 the gare is bath­tub-dry already (`wet=n`), so
+  connectivity changes nothing in the normal range. Open-coast intertidal in-tile (Le Rosais, western
+  flats) stays wet; the Sillon/intra-muros beaches are off-tile (coverage gap), unaffected.
+- **Honest residual:** the clip saddle (+7.30) sits *at* PHMA because the clip truncates protective
+  terrain south/east; on the full mosaic it is +7.85 (dry above PHMA). The genuinely robust fix is to
+  **widen the pipeline clip / extend Litto3D coverage** so the real terrain ring (and the true north
+  coastline) are included — then the seed is trivial and the allowlist can be dropped. Until then,
+  Option A + allowlist is the correct pragmatic fix and resolves the user's H_LAT 12 complaint.
+
+---
+
+## §17 Consolidated Sonnet implementation prompt — v1.4 hydraulic connectivity
+
+**— BEGIN PROMPT —**
+
+You are implementing **v1.4** of the LiDAR waterline for the Tides Android app (Saint-Malo pilot).
+This is a **pipeline-only + asset-version** change: add hydraulic (sea-connected) flood-fill so
+dike/quay-protected low ground (the railway-station / La Découverte district) stops bath­tub-flooding
+at spring tides, while keeping legitimate seaward intertidal and the harbour wet-docks as water.
+Measurement backing every number here is in `docs/lidar-plan.md` §16. Do the changes in order; do
+not touch unrelated code or start a new zone.
+
+Repo paths:
+```
+D:\Perso\TideApp\
+  data\scratch\pipeline_stage1b.py   ← Stage 1B vectorize (edit: per-band sea-connectivity)
+  data\scratch\finalize_4m2_2m.py    ← Stage 1C finalize (edit: OUT_FILE, pipeline_stage, generated)
+  data\scratch\output\               ← mosaic_lambert93.tif (reuse), waterline_bands.geojson
+  app\src\main\java\com\exilon\tides\data\LidarRepository.kt  ← zone mapping (edit: v1.4)
+```
+
+### Change 1 — Sea-connected flood-fill per band (`pipeline_stage1b.py`)
+Add `from scipy import ndimage` at the top. **After** the clip is read and `valid_clip` is built
+(around line 108), and **before** the band loop (line 145), build the sea mask geometry ONCE:
+
+```python
+# ── Hydraulic connectivity: identify genuine open sea (v1.4) ──────────────────
+# The clip is ~74% boundless nodata padding on the W+N (station sits at the NW
+# corner of DEM coverage; the true open bay is OFF-TILE north). So we must NOT
+# let the padding inject "sea" from the north. nodata = BARRIER; sea enters only
+# across low VALID ground on the seaward (west + south) sides.
+STRUCT = np.ones((3, 3), bool)
+_nlab, _ = ndimage.label(~valid_clip, structure=STRUCT)
+pad = _nlab == _nlab[0, 0]                 # boundless padding = nodata blob at corner (0,0)
+west_pad = np.zeros_like(pad); west_pad[:, 1:] = pad[:, :-1]
+west_shore = valid_clip & west_pad         # valid cells whose WEST neighbour is padding
+south_edge = np.zeros_like(valid_clip); south_edge[-1, :] = valid_clip[-1, :]
+sea_entry = west_shore | south_edge        # open-sea entry cells (level-independent)
+
+# Keep-wet allowlist: measured eastern inner-harbour wet-dock fringes (§16.4) that
+# a flood-fill would otherwise disconnect and wrongly dry. (The DEEP locked basins
+# Vauban/Duguay-Trouin/Bas-Sablons are 100% nodata -> already basemap water -> not
+# in valid_clip -> untouched; this list is only the MEASURED shallow fringe.)
+from pyproj import Transformer as _T
+_to_l93 = _T.from_crs("EPSG:4326", "EPSG:2154", always_xy=True)
+LOCKED_BASINS_WGS = [   # (lon_min, lat_min, lon_max, lat_max)
+    (-2.0030, 48.6418, -2.0000, 48.6437),   # main harbour pocket (~30.6k m^2)
+    (-2.0000, 48.6418, -1.9945, 48.6445),   # eastern satellites (~14k m^2)
+]
+ai, aj = clip_tf.a, clip_tf.e
+keep_wet = np.zeros_like(valid_clip)
+for lon0, lat0, lon1, lat1 in LOCKED_BASINS_WGS:
+    (x0, x1), (y0, y1) = _to_l93.transform([lon0, lon1], [lat0, lat1])
+    c0 = int((min(x0, x1) - clip_tf.c) / ai); c1 = int((max(x0, x1) - clip_tf.c) / ai)
+    r0 = int((max(y0, y1) - clip_tf.f) / aj); r1 = int((min(y0, y1) - clip_tf.f) / aj)
+    keep_wet[max(0, r0):r1+1, max(0, c0):c1+1] = True
+keep_wet &= valid_clip
+
+def sea_connected(z_hi):
+    """Valid wet cells (clip < z_hi) reachable from open sea, nodata as barrier."""
+    wet = valid_clip & (clip < z_hi)
+    lab, _ = ndimage.label(wet, structure=STRUCT)
+    sea_labels = set(np.unique(lab[sea_entry & wet])) - {0}
+    return np.isin(lab, list(sea_labels))
+```
+
+Then in the band loop, replace the `band_mask` definition so a band cell survives only if it is
+sea-connected **at its own upper edge** OR inside the keep-wet allowlist:
+
+```python
+    base = valid_clip & (clip >= z_lo) & (clip < z_hi) if i < n_bands - 1 \
+           else valid_clip & (clip >= z_lo) & (clip <= z_hi)
+    band_mask = base & (sea_connected(z_hi) | keep_wet)
+```
+
+Leave Step 4b (permanent water floor, `band_idx=-1`) unchanged — it is below Z_MIN and always water.
+Connectivity must apply ONLY to the regular tidal bands.
+
+### Change 2 — Finalize metadata (`finalize_4m2_2m.py`)
+```python
+OUT_FILE = r"D:\Perso\TideApp\data\scratch\output\lidar-saint-malo-v1.4.geojson"
+"pipeline_stage": "1C-v1.4",
+"generated":      "2026-06-18",
+```
+
+### Change 3 — Regenerate + publish
+```
+python data\scratch\pipeline_stage1b.py
+python data\scratch\finalize_4m2_2m.py
+gh release create lidar-saint-malo-v1.4 ^
+  "data\scratch\output\lidar-saint-malo-v1.4.geojson" ^
+  "data\scratch\output\lidar-saint-malo-v1.4.geojson.gz" ^
+  --repo exilonn/lidar-saint-malo --title "Litto3D waterline — Saint-Malo v1.4" ^
+  --notes "Hydraulic connectivity: dike/quay-protected low ground (gare/La Decouverte) no longer bathtub-floods at spring tides; seaward intertidal + harbour wet-docks preserved (keep-wet allowlist). Locked basins unchanged (nodata=basemap water)."
+```
+
+### Change 4 — Zone mapping (`LidarRepository.kt`)
+Bump the Saint-Malo `LidarZoneInfo`: `assetVersion = 5`, `assetUrl` → the v1.4 release asset,
+`pipelineStage = "1C-v1.4"`. ZhRef unchanged (−6.2890). This forces a one-time re-download
+(version-driven cache invalidation); the Room `lidar_zone` row updates on next open. **No DB
+migration and no app-logic change** — the renderer already filters `z_min_m < targetElev`.
+
+### Verify before publishing (print, don't guess)
+- `0` invalid features, all exteriors CCW (the existing `finalize` two-pass validity check).
+- The gare/La Découverte cells are ABSENT from all bands whose `z_max ≤ +7.30 m`, i.e. dry up to
+  ≈ PHMA (spot-check a vertex near 48.6398,−2.0045).
+- The eastern harbour pocket (≈48.6430,−2.0006, elev +0.7…+2.5) IS present as water in the low bands
+  (allowlist working).
+- Le Rosais (≈48.6244,−2.0134) IS present as water from H_LAT ≈ 9 upward (seaward intertidal kept).
+
+### On-device acceptance
+- At H_LAT ≈ 12 (drive the debug slider), the gare/La Découverte district reads as **land**, not water.
+- The locked harbour basins and Bas-Sablons marina stay water at every slider position.
+- The open-coast/Rance-side beaches still flood/ebb with the slider.
+- A non-LiDAR station still uses the Level-2 crossfade (unaffected).
+
+**— END PROMPT —**
+
+---
+
 ## Open questions
 
 1. ~~**TideCheck datum.**~~ ~~RESOLVED 2026-06-17. `datum=LAT` confirmed.~~ **REOPENED then
@@ -1414,15 +1631,24 @@ and `app_state` are all safe.
    mismatch is visually distracting at mid-tide, the OSM substrate layer can be narrowed or removed
    for Level-3 stations in a future pass. (Unaffected by the v1.1 datum fix.)
 
-7. ~~**Hydraulic connectivity — REPLANNED, recommend DEFER.**~~ **DEFERRED (2026-06-18).** Measurement
-   confirmed ~nil ROI at realistic tides and naive flood-fill empties locked basins. Change C spec
-   retained in §12 gated on a field-confirmed inland puddle. No further action unless triggered.
+7. ~~**Hydraulic connectivity — DEFERRED.**~~ **UN-DEFERRED (2026-06-18) → spec'd as v1.4 (§17).**
+   The deferral rested on a flood-fill that seeded all clip edges through nodata, injecting sea from
+   the off-tile-north interior (artefact). Re-measured at SPRING levels with a correct west/south
+   open-sea seed (nodata = barrier): connectivity keeps the gare/La Découverte cluster **dry at
+   H_LAT 10.5 and 12.0** (blocking quay ring ≈ +7.30 m IGN69 ≈ PHMA), while Le Rosais and harbour
+   wet-docks stay wet. Decision: **Option A (connectivity) + keep-wet allowlist**; Option B
+   (coastline buffer) rejected (can't separate gare 1081 m from harbour 1433 m). Full tables §16,
+   implementation prompt §17.
 
 8. ~~**Permanent water floor (v1.3 Change B).**~~ **SHIPPED (2026-06-18).** Implemented as permanent
    `band_idx=-1` feature; always-on water in `lidarWaterFilter`. Change B now closed.
 
-9. **Locked-basin allowlist coordinates.** Only needed if Change C (connectivity) is ever enabled.
-   Approximate bounding boxes in §12; precise OSM `harbour`/`dock` rings required before enabling C.
+9. ~~**Locked-basin allowlist coordinates.**~~ **MEASURED (2026-06-18).** The only measured cells a
+   flood-fill would wrongly dry are the eastern inner-harbour shallows (§16.4): two bboxes
+   (−2.0030,48.6415,−2.0000,48.6437) and (−2.0000,48.6418,−1.9945,48.6445), baked into §17 Change 1.
+   Deep basins (Vauban/Duguay-Trouin/Bas-Sablons) are nodata → basemap water → no allowlist needed.
+   Open: tighten the two bboxes to OSM dock rings if the rectangular allowlist visibly over-keeps
+   adjacent ground wet on device.
 
 10. ~~**Debug-slider max above PHMA.**~~ **RESOLVED (2026-06-18).** Confirmed intentional at 14.6 m
     (to reach top buffer band); flagged `>PHMA — non physique` in the readout. Closed.
