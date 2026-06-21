@@ -125,10 +125,10 @@ class LidarRepository(
         private val ZONES = mapOf(
             "saint_malo-410-fra-refmar" to LidarZoneInfo(
                 zoneId = "stmalo",
-                assetVersion = 5,
-                assetUrl = "https://github.com/exilonn/lidar-saint-malo/releases/download/lidar-saint-malo-v1.4/lidar-saint-malo-v1.4.geojson",
+                assetVersion = 6,
+                assetUrl = "https://github.com/exilonn/lidar-saint-malo/releases/download/lidar-saint-malo-v1.5/lidar-saint-malo-v1.5.geojson",
                 zhRef = -6.2890,
-                pipelineStage = "1C-v1.4",
+                pipelineStage = "1C-v1.5",
             ),
         )
     }
